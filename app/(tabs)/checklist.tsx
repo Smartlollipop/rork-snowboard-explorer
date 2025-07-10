@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-  Animated,
   Dimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,13 +20,13 @@ import Colors from '@/constants/colors';
 export default function ChecklistScreen() {
   const { items, toggleItem, addItem, removeItem, getCompletionPercentage } = useChecklistStore();
   const [newItemText, setNewItemText] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [listFilterCategory, setListFilterCategory] = useState<string | null>(null); // For filtering the list
+  const [newItemCategory, setNewItemCategory] = useState<string>('gear'); // For the new item form
   const [showAddItem, setShowAddItem] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   
   const inputRef = useRef<TextInput>(null);
-  const { height: screenHeight } = Dimensions.get('window');
 
   const completionPercentage = getCompletionPercentage();
   
@@ -57,16 +56,17 @@ export default function ChecklistScreen() {
   
   // Group items by category
   const categories = items.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
+    const category = item.category || 'other';
+    if (!acc[category]) {
+      acc[category] = [];
     }
-    acc[item.category].push(item);
+    acc[category].push(item);
     return acc;
   }, {} as Record<string, typeof items>);
   
   // Filter by selected category or show all
-  const filteredCategories = selectedCategory 
-    ? { [selectedCategory]: categories[selectedCategory] } 
+  const filteredCategories = listFilterCategory 
+    ? { [listFilterCategory]: categories[listFilterCategory] } 
     : categories;
   
   // Category labels
@@ -84,9 +84,10 @@ export default function ChecklistScreen() {
         id: Date.now().toString(),
         title: newItemText.trim(),
         completed: false,
-        category: selectedCategory as any || 'other',
+        category: newItemCategory as any,
       });
       setNewItemText('');
+      setNewItemCategory('gear'); // Reset to default
       setShowAddItem(false);
       Keyboard.dismiss();
     }
@@ -121,14 +122,14 @@ export default function ChecklistScreen() {
             <Pressable
               style={[
                 styles.categoryButton,
-                selectedCategory === null && styles.categoryButtonActive,
+                listFilterCategory === null && styles.categoryButtonActive,
               ]}
-              onPress={() => setSelectedCategory(null)}
+              onPress={() => setListFilterCategory(null)}
             >
               <Text 
                 style={[
                   styles.categoryButtonText,
-                  selectedCategory === null && styles.categoryButtonTextActive,
+                  listFilterCategory === null && styles.categoryButtonTextActive,
                 ]}
               >
                 All
@@ -140,14 +141,14 @@ export default function ChecklistScreen() {
                 key={category}
                 style={[
                   styles.categoryButton,
-                  selectedCategory === category && styles.categoryButtonActive,
+                  listFilterCategory === category && styles.categoryButtonActive,
                 ]}
-                onPress={() => setSelectedCategory(category)}
+                onPress={() => setListFilterCategory(category)}
               >
                 <Text 
                   style={[
                     styles.categoryButtonText,
-                    selectedCategory === category && styles.categoryButtonTextActive,
+                    listFilterCategory === category && styles.categoryButtonTextActive,
                   ]}
                 >
                   {categoryLabels[category] || category}
@@ -161,7 +162,7 @@ export default function ChecklistScreen() {
           style={styles.scrollView}
           contentContainerStyle={[
             styles.content,
-            showAddItem && keyboardVisible && { paddingBottom: keyboardHeight + 200 }
+            showAddItem && keyboardVisible && { paddingBottom: keyboardHeight }
           ]}
           showsVerticalScrollIndicator={false}
         >
@@ -223,6 +224,7 @@ export default function ChecklistScreen() {
                   autoFocus
                 />
                 <View style={styles.categorySelect}>
+                  <Text style={styles.addItemCategoryLabel}>Category:</Text>
                   <ScrollView 
                     horizontal 
                     showsHorizontalScrollIndicator={false}
@@ -232,14 +234,14 @@ export default function ChecklistScreen() {
                         key={category}
                         style={[
                           styles.addItemCategoryButton,
-                          selectedCategory === category && styles.addItemCategoryButtonActive,
+                          newItemCategory === category && styles.addItemCategoryButtonActive,
                         ]}
-                        onPress={() => setSelectedCategory(category)}
+                        onPress={() => setNewItemCategory(category)}
                       >
                         <Text 
                           style={[
                             styles.addItemCategoryText,
-                            selectedCategory === category && styles.addItemCategoryTextActive,
+                            newItemCategory === category && styles.addItemCategoryTextActive,
                           ]}
                         >
                           {categoryLabels[category]}
@@ -427,11 +429,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 16,
+    paddingBottom: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 4,
+    elevation: 8,
     zIndex: 100,
   },
   addItemForm: {
@@ -443,9 +446,16 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   categorySelect: {
     marginBottom: 16,
+  },
+  addItemCategoryLabel: {
+    fontSize: 14,
+    color: Colors.text.secondary,
+    marginBottom: 8,
   },
   addItemCategoryButton: {
     paddingHorizontal: 12,
@@ -453,9 +463,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Colors.background,
     marginRight: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   addItemCategoryButtonActive: {
     backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
   addItemCategoryText: {
     fontSize: 14,
@@ -467,6 +480,7 @@ const styles = StyleSheet.create({
   addItemActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    alignItems: 'center'
   },
   addItemCancel: {
     paddingHorizontal: 16,
@@ -476,6 +490,7 @@ const styles = StyleSheet.create({
   addItemCancelText: {
     fontSize: 16,
     color: Colors.text.secondary,
+    fontWeight: '500',
   },
   addItemSubmit: {
     backgroundColor: Colors.primary,
