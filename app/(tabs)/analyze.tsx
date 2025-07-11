@@ -6,27 +6,26 @@ import { Plus, Play, TrendingUp } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 
-// --- 修改数据源，直接引用本地图片 ---
 const aiSuggestions = [
   {
     id: '1',
     title: 'Good parallel turns',
-    image: require('@/assets/images/suggestion-1.jpg'),
+    image: 'https://images.unsplash.com/photo-1551524164-6cf2ac531fb4?w=400&h=300&fit=crop&crop=center',
   },
   {
     id: '2',
     title: 'Work on upper body stability',
-    image: require('@/assets/images/suggestion-2.jpg'),
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center',
   },
   {
     id: '3',
     title: 'Focus on smoother turning',
-    image: require('@/assets/images/suggestion-3.jpg'),
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=faces',
   },
   {
     id: '4',
     title: 'Keep a consistent stance',
-    image: require('@/assets/images/suggestion-4.jpg'),
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy',
   },
 ];
 
@@ -34,7 +33,7 @@ export default function AnalyzeScreen() {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('@/assets/images/suggestion-4.jpg')} // 背景也使用本地图片
+        source={{ uri: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=center' }}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
@@ -78,7 +77,7 @@ export default function AnalyzeScreen() {
                   {aiSuggestions.map((suggestion) => (
                     <Pressable key={suggestion.id} style={styles.suggestionCard}>
                       <Image
-                        source={suggestion.image} // --- 现在 source 直接是 require(...) 的结果 ---
+                        source={{ uri: suggestion.image }}
                         style={styles.suggestionImage}
                         contentFit="cover"
                         transition={200}
