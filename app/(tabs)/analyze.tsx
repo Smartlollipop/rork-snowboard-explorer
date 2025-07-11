@@ -10,22 +10,22 @@ const aiSuggestions = [
   {
     id: '1',
     title: 'Good parallel turns',
-    image: 'https://images.unsplash.com/photo-1551524164-6cf2ac531fb4?w=400&h=300&fit=crop&crop=center',
+    image: 'https://images.unsplash.com/photo-1551524164-6cf2ac531fb4?q=80&w=800&h=600&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
     id: '2',
     title: 'Work on upper body stability',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center',
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=800&h=600&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
     id: '3',
     title: 'Focus on smoother turning',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=faces',
+    image: 'https://images.unsplash.com/photo-1578662015905-0dd8e4f8e96c?q=80&w=800&h=600&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
     id: '4',
     title: 'Keep a consistent stance',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&h=600&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
 ];
 
@@ -33,7 +33,7 @@ export default function AnalyzeScreen() {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=center' }}
+        source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&h=800&fit=crop&ixlib=rb-4.0.3' }}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
@@ -81,6 +81,7 @@ export default function AnalyzeScreen() {
                         style={styles.suggestionImage}
                         contentFit="cover"
                         transition={200}
+                        cachePolicy="memory-disk"
                       />
                       
                       <View style={styles.playButton}>
@@ -89,9 +90,7 @@ export default function AnalyzeScreen() {
                       
                       <View style={styles.suggestionTextContainer}>
                         <BlurView intensity={45} tint="dark" style={styles.suggestionTextOverlay}>
-                          <Text style={styles.suggestionText} numberOfLines={2}>
-                            {suggestion.title}
-                          </Text>
+                          <Text style={styles.suggestionText}>{suggestion.title}</Text>
                         </BlurView>
                       </View>
                     </Pressable>

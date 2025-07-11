@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Cloud, Calendar, LightbulbIcon } from 'lucide-react-native';
@@ -47,17 +47,6 @@ export default function HomeScreen() {
     );
   };
 
-  // Add a loading state to prevent crashes
-  if (!user || !preferredResort) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView 
@@ -83,9 +72,9 @@ export default function HomeScreen() {
         />
         
         <InfoCard 
-          icon={<CalendarIcon date={nextTrip?.date || new Date().toISOString()} />}
+          icon={<CalendarIcon date="2025-01-21" />}
           title="Next Trip"
-          subtitle={nextTrip ? formatDate(nextTrip.date) : "No trips planned"}
+          subtitle="January 21"
           rightText={nextTrip ? getTimeUntil(nextTrip.date) : ""}
           onPress={() => nextTrip && router.push(`/trip/${nextTrip.id}`)}
           actionButton={
@@ -134,11 +123,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   scrollView: {
     flex: 1,
